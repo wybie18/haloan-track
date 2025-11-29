@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
@@ -22,42 +21,47 @@ class OauthController extends Controller
             $user = User::updateOrCreate(
                 ['email' => $socialUser->getEmail()],
                 [
-                    'name' => $socialUser->getName(),
-                    'provider' => $provider,
+                    'name'        => $socialUser->getName(),
+                    'provider'    => $provider,
                     'provider_id' => $socialUser->getId(),
-                    'avatar' => $socialUser->getAvatar(),
-                    'role' => 'user',
-                    'password' => bcrypt(str()->random(16)),
+                    'avatar'      => $socialUser->getAvatar(),
+                    'role'        => 'user',
+                    'password'    => bcrypt(str()->random(16)),
+                    'email_verified_at' => now(),
                 ]
             );
 
-            // 3. Generate a Sanctum Token
             $token = $user->createToken('mobile-app')->plainTextToken;
 
-            $userJson = $user->toJson(); 
+            $userJson = $user->toJson();
 
-            // 4. Redirect to the App
-            // We need to know the app's scheme. 
-            // In dev (Expo Go), this changes (e.g., exp://192.168.1.5:8081).
-            // In prod, it is fixed (e.g., myapp://).
-            
-            // You can pass the scheme from the frontend in the first request 
-            // and pass it through state, but for simplicity, let's assume a fixed dev URL 
-            // or use a config/env variable.
-            
-            $appUrl = config('app.mobile_app_scheme', 'exp://192.168.1.5:8081/'); 
-            
+            $scheme = config('app.mobile_app_scheme', 'exp://127.0.0.1:19000');
+
+            $cleanScheme = str_replace('://', '', $scheme);
+            $cleanScheme = rtrim($cleanScheme, '/');
+
+            $baseUrl = $cleanScheme . '://';
+
+            // Result: "haloantrack://--/auth/callback"
+            $appUrl = $baseUrl . '--/auth/callback';
+
             $queryParams = http_build_query([
-                'token' => $token,
-                'user' => $userJson,
-                'status' => 'success',
+                'token'   => $token,
+                'user'    => $userJson,
+                'status'  => 'success',
                 'message' => 'Authentication successful',
             ]);
 
-            return redirect($appUrl . '--/auth/callback?' . $queryParams);
+            $fullUrl = $appUrl . '?' . $queryParams;
+
+            return redirect()->away($fullUrl);
 
         } catch (\Exception $e) {
-            return redirect(config('app.mobile_app_scheme') . '/--/auth/callback?status=error&message=' . $e->getMessage());
+            $scheme      = config('app.mobile_app_scheme', 'exp://127.0.0.1:19000');
+            $cleanScheme = str_replace('://', '', $scheme);
+            $baseUrl     = rtrim($cleanScheme, '/') . '://';
+
+            return redirect()->away($baseUrl . '--/auth/callback?status=error&message=' . urlencode($e->getMessage()));
         }
     }
 }
