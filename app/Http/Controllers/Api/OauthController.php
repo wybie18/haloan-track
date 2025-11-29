@@ -34,6 +34,8 @@ class OauthController extends Controller
             // 3. Generate a Sanctum Token
             $token = $user->createToken('mobile-app')->plainTextToken;
 
+            $userJson = $user->toJson(); 
+
             // 4. Redirect to the App
             // We need to know the app's scheme. 
             // In dev (Expo Go), this changes (e.g., exp://192.168.1.5:8081).
@@ -47,7 +49,7 @@ class OauthController extends Controller
             
             $queryParams = http_build_query([
                 'token' => $token,
-                'user' => $user,
+                'user' => $userJson,
                 'status' => 'success',
                 'message' => 'Authentication successful',
             ]);
