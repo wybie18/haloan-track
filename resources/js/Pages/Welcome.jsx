@@ -3,6 +3,11 @@ import { LuFish, LuBell, LuActivity, LuDownload, LuWaves, LuSprout } from "react
 import Button from "../Components/Button";
 
 export default function Welcome() {
+
+    const handleDownload = () => {
+        window.location.href = '/download-app';
+    };
+
     return (
         <>
             <Head title="Haloan Track - Mudfish Pond Manager" />
@@ -37,7 +42,7 @@ export default function Welcome() {
                         </p>
 
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                            <Button leftIcon={LuDownload} size="lg" className="w-full sm:w-auto shadow-emerald-900/20">
+                            <Button onClick={handleDownload} leftIcon={LuDownload} size="lg" className="w-full sm:w-auto shadow-emerald-900/20">
                                 Download App
                             </Button>
                         </div>
