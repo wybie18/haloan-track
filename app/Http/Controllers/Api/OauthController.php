@@ -40,10 +40,13 @@ class OauthController extends Controller
             $cleanScheme = str_replace('://', '', $scheme);
             $cleanScheme = rtrim($cleanScheme, '/');
 
-            $baseUrl = $cleanScheme . '://';
+            $isExpoGo = str_starts_with($scheme, 'exp://');
 
-            // Result: "haloantrack://--/auth/callback"
-            $appUrl = $baseUrl . '--/auth/callback';
+            if ($isExpoGo) {
+                $appUrl = $cleanScheme . '://--/auth/callback';
+            } else {
+                $appUrl = $cleanScheme . '://auth/callback';
+            }
 
             $queryParams = http_build_query([
                 'token'   => $token,
