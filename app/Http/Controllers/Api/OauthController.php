@@ -21,47 +21,43 @@ class OauthController extends Controller
             $user = User::updateOrCreate(
                 ['email' => $socialUser->getEmail()],
                 [
-                    'name'        => $socialUser->getName(),
-                    'provider'    => $provider,
+                    'name' => $socialUser->getName(),
                     'provider_id' => $socialUser->getId(),
-                    'avatar'      => $socialUser->getAvatar(),
-                    'role'        => 'user',
-                    'password'    => bcrypt(str()->random(16)),
-                    'email_verified_at' => now(),
+                    'avatar' => $socialUser->getAvatar(),
+                    'role' => 'user',
+                    'password' => bcrypt(str()->random(16)),
                 ]
             );
 
             $token = $user->createToken('mobile-app')->plainTextToken;
-
-            $userJson = $user->toJson();
+            $userJson = $user->toJson(); 
 
             $scheme = config('app.mobile_app_scheme', 'exp://127.0.0.1:19000');
-
+            
             $cleanScheme = str_replace('://', '', $scheme);
             $cleanScheme = rtrim($cleanScheme, '/');
 
-            $baseUrl = $cleanScheme . '://';
-
-            // Result: "haloantrack://--/auth/callback"
-            $appUrl = $baseUrl . '--/auth/callback';
+            $appUrl = $cleanScheme . '://--/auth/callback';
 
             $queryParams = http_build_query([
-                'token'   => $token,
-                'user'    => $userJson,
-                'status'  => 'success',
+                'token' => $token,
+                'user' => $userJson,
+                'status' => 'success',
                 'message' => 'Authentication successful',
             ]);
 
             $fullUrl = $appUrl . '?' . $queryParams;
 
-            return redirect()->away($fullUrl);
+            header("Location: " . $fullUrl);
+            exit();
 
         } catch (\Exception $e) {
-            $scheme      = config('app.mobile_app_scheme', 'exp://127.0.0.1:19000');
-            $cleanScheme = str_replace('://', '', $scheme);
-            $baseUrl     = rtrim($cleanScheme, '/') . '://';
-
-            return redirect()->away($baseUrl . '--/auth/callback?status=error&message=' . urlencode($e->getMessage()));
+             $scheme = config('app.mobile_app_scheme', 'exp://127.0.0.1:19000');
+             $cleanScheme = str_replace('://', '', $scheme);
+             
+             $errorUrl = $cleanScheme . '://--/auth/callback?status=error&message=' . urlencode($e->getMessage());
+             header("Location: " . $errorUrl);
+             exit();
         }
     }
 }
