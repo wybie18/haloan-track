@@ -48,16 +48,42 @@ class OauthController extends Controller
 
             $fullUrl = $appUrl . '?' . $queryParams;
 
-            header("Location: " . $fullUrl);
-            exit();
+            return response('
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Redirecting...</title>
+                    <script>
+                        window.onload = function() {
+                            window.location.href = "' . $fullUrl . '";
+                        };
+                    </script>
+                </head>
+                <body style="display:flex; justify-content:center; align-items:center; height:100vh; font-family:sans-serif; flex-direction:column;">
+                    <p>Redirecting to HaloanTrack...</p>
+                    <a href="' . $fullUrl . '" style="padding:10px 20px; background:#007bff; color:white; text-decoration:none; border-radius:5px;">Click here if not redirected</a>
+                </body>
+                </html>
+            ');
 
         } catch (\Exception $e) {
              $scheme = config('app.mobile_app_scheme', 'exp://127.0.0.1:19000');
              $cleanScheme = str_replace('://', '', $scheme);
              
              $errorUrl = $cleanScheme . '://--/auth/callback?status=error&message=' . urlencode($e->getMessage());
-             header("Location: " . $errorUrl);
-             exit();
+             
+             return response('
+                <!DOCTYPE html>
+                <html>
+                <script>
+                    window.location.href = "' . $errorUrl . '";
+                </script>
+                <body>
+                    <p>Redirecting with error...</p>
+                    <a href="' . $errorUrl . '">Click here</a>
+                </body>
+                </html>
+            ');
         }
     }
 }
