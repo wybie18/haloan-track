@@ -123,4 +123,5 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'mobile_app_scheme' => env('MOBILE_APP_SCHEME', 'myapp')
 ];
