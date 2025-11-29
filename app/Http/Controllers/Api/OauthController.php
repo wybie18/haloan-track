@@ -45,7 +45,7 @@ class OauthController extends Controller
             // and pass it through state, but for simplicity, let's assume a fixed dev URL 
             // or use a config/env variable.
             
-            $appUrl = config('app.mobile_app_scheme', 'exp://192.168.1.5:8081'); 
+            $appUrl = config('app.mobile_app_scheme', 'exp://192.168.1.5:8081/'); 
             
             $queryParams = http_build_query([
                 'token' => $token,
@@ -54,7 +54,7 @@ class OauthController extends Controller
                 'message' => 'Authentication successful',
             ]);
 
-            return redirect($appUrl . '/--/auth/callback?' . $queryParams);
+            return redirect($appUrl . '--/auth/callback?' . $queryParams);
 
         } catch (\Exception $e) {
             return redirect(config('app.mobile_app_scheme') . '/--/auth/callback?status=error&message=' . $e->getMessage());
