@@ -5,7 +5,6 @@ use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\OauthController;
 use App\Http\Controllers\Api\PondController;
 use App\Http\Controllers\Api\ScheduleController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -22,7 +21,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/password', [AuthController::class, 'updatePassword']);
 
     // Ponds Management
-    Route::apiResource('ponds', PondController::class);
+    Route::name('api.')->group(function () {
+        Route::apiResource('ponds', PondController::class);
+    });
 
     // Notifications
     Route::get('/notifications', [NotificationController::class, 'index']);
