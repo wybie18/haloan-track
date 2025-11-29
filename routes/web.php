@@ -25,4 +25,14 @@ Route::middleware('auth', 'verified', 'admin')->group(function () {
     Route::get('/ponds/index', [PondController::class, 'index'])->name('ponds.index');
 });
 
+Route::get('/download-app', function () {
+    $filepath = storage_path('app/apk/app-release.apk');
+
+    if (!file_exists($filepath)) {
+        abort(404);
+    }
+
+    return response()->download($filepath, 'haloan-track.apk');
+})->name('app.download');
+
 require __DIR__ . '/auth.php';
