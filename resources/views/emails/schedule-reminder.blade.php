@@ -157,7 +157,7 @@
             </div>
             
             <p class="message">
-                Open the Haloan Track app to view more details and mark this task as complete.
+                Open the Haloan Track app to view more details.
             </p>
         </div>
         <div class="footer">
