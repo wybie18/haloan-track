@@ -285,6 +285,28 @@ class AuthController extends Controller
         ]);
     }
 
+    public function resendResetOtp(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            throw ValidationException::withMessages([
+                'email' => ['User not found.'],
+            ]);
+        }
+
+        $otp = Otp::createForUser($user->id, 'password_reset');
+        Mail::to($user->email)->send(new PasswordResetMail($otp));
+
+        return response()->json([
+            'message' => 'Password reset OTP sent to your email.',
+        ]);
+    }
+
     /**
      * Update user profile information.
      */
