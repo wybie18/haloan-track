@@ -20,17 +20,11 @@ class ScheduleReminderMail extends Mailable implements ShouldQueue
     protected Notification $notificationModel;
 
     /**
-     * The total number of ponds for this user.
-     */
-    protected int $pondCount;
-
-    /**
      * Create a new message instance.
      */
-    public function __construct(Notification $notification, int $pondCount = 1)
+    public function __construct(Notification $notification)
     {
         $this->notificationModel = $notification;
-        $this->pondCount = $pondCount;
     }
 
     /**
@@ -54,7 +48,6 @@ class ScheduleReminderMail extends Mailable implements ShouldQueue
                 'title' => $this->notificationModel->title,
                 'message' => $this->notificationModel->message,
                 'pondName' => $this->notificationModel->pond ? $this->notificationModel->pond->name : null,
-                'pondCount' => $this->pondCount,
                 'scheduledAt' => $this->notificationModel->notify_at->format('F j, Y - g:i A'),
             ],
         );
