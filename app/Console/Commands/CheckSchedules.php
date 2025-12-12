@@ -34,7 +34,7 @@ class CheckSchedules extends Command
         $now = Carbon::now();
         $currentTime = $now->format('H:i:00'); // Match minute precision
 
-        $schedules = Schedule::where('is_active', true)->get();
+        $schedules = Schedule::with('operationType')->where('is_active', true)->get();
 
         foreach ($schedules as $schedule) {
             if ($this->isDue($schedule, $now)) {
@@ -102,6 +102,12 @@ class CheckSchedules extends Command
             if ($pond->user) {
                 $pond->user->notify(new ScheduleNotification($notification));
                 Log::info("Notification sent to user {$pond->user_id} for pond {$pond->id} and schedule {$schedule->id}.");
+            }
+
+            // Automatically set pond to inactive if the schedule is for Harvesting
+            if ($schedule->operationType && $schedule->operationType->name === 'Harvesting') {
+                $pond->update(['status' => 'inactive']);
+                Log::info("Pond {$pond->id} set to inactive due to Harvesting schedule.");
             }
         }
     }
