@@ -1,5 +1,5 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, usePage } from "@inertiajs/react";
+import { Head, Link, usePage } from "@inertiajs/react";
 import { LuUsers, LuWaves, LuFish, LuCalendar, LuActivity, LuTrendingUp } from "react-icons/lu";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -148,7 +148,7 @@ export default function Dashboard({ stats, pondsByStatus, schedulesByType, recen
                 <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                     <div className="p-6 border-b border-slate-100 flex items-center justify-between">
                         <h3 className="text-lg font-bold text-slate-900">Recent Ponds</h3>
-                        <button className="text-sm text-cyan-600 hover:text-cyan-700 font-medium">View All</button>
+                        <Link href={route('ponds.index')} as="button" className="text-sm text-cyan-600 hover:text-cyan-700 font-medium">View All</Link>
                     </div>
                     <div className="overflow-x-auto">
                         <table className="w-full">
