@@ -15,11 +15,17 @@ class PasswordResetMail extends Mailable
     use Queueable, SerializesModels;
 
     /**
+     * The OTP instance.
+     */
+    protected Otp $otpModel;
+
+    /**
      * Create a new message instance.
      */
-    public function __construct(
-        public Otp $otp
-    ) {}
+    public function __construct(Otp $otp)
+    {
+        $this->otpModel = $otp;
+    }
 
     /**
      * Get the message envelope.
@@ -39,8 +45,8 @@ class PasswordResetMail extends Mailable
         return new Content(
             view: 'emails.password-reset',
             with: [
-                'otp' => $this->otp->otp,
-                'expiresAt' => $this->otp->expires_at->format('H:i'),
+                'otp' => $this->otpModel->otp,
+                'expiresAt' => $this->otpModel->expires_at->format('H:i'),
             ],
         );
     }
