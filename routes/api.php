@@ -16,6 +16,7 @@ Route::post('/verify-email', [AuthController::class, 'verifyEmail']);
 Route::post('/resend-verification-otp', [AuthController::class, 'resendVerificationOtp']);
 Route::post('/verify-reset-otp', [AuthController::class, 'verifyResetOtp']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+ROute::post('/resend-reset-otp', [AuthController::class, 'resendResetOtp']);
 
 Route::get('/auth/{provider}/redirect', [OauthController::class, 'redirectToProvider']);
 Route::get('/auth/{provider}/callback', [OauthController::class, 'handleProviderCallback']);
