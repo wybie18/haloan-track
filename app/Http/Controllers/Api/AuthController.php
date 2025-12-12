@@ -7,7 +7,6 @@ use App\Mail\EmailVerificationMail;
 use App\Mail\PasswordResetMail;
 use App\Models\Otp;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -34,8 +33,6 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
             'role' => 'user', // Default role for mobile users
         ]);
-
-        event(new Registered($user));
 
         // Create and send OTP for email verification
         $otp = Otp::createForUser($user->id, 'email_verification');
