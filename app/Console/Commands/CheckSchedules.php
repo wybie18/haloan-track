@@ -85,51 +85,32 @@ class CheckSchedules extends Command
 
     protected function dispatchNotifications(Schedule $schedule)
     {
-        // Get all active ponds grouped by user
+        // Get all active ponds
         $ponds = Pond::where('status', 'active')->with('user')->get();
-        $pondsByUser = $ponds->groupBy('user_id');
 
-        foreach ($pondsByUser as $userId => $userPonds) {
-            $user = $userPonds->first()->user;
-            if (!$user) continue;
+        foreach ($ponds as $pond) {
+            // Create Notification Record
+            $notification = Notification::create([
+                'user_id' => $pond->user_id,
+                'pond_id' => $pond->id,
+                'schedule_id' => $schedule->id,
+                'title' => $schedule->name,
+                'message' => $schedule->description ?? "Scheduled task: {$schedule->name}",
+                'notify_at' => now(),
+                'status' => 'pending',
+            ]);
 
-            $notifications = [];
-
-            foreach ($userPonds as $pond) {
-                // Create Notification Record
-                $notification = Notification::create([
-                    'user_id' => $pond->user_id,
-                    'pond_id' => $pond->id,
-                    'schedule_id' => $schedule->id,
-                    'title' => $schedule->name,
-                    'message' => $schedule->description ?? "Scheduled task: {$schedule->name}",
-                    'notify_at' => now(),
-                    'status' => 'pending',
-                ]);
-
-                $notifications[] = $notification;
-
-                // Send Broadcast Notification (one per pond for real-time updates)
-                $user->notify(new ScheduleNotification($notification));
-
-                // Automatically set pond to inactive if the schedule is for Harvesting
-                if ($schedule->operationType && $schedule->operationType->name === 'Harvesting') {
-                    $pond->update(['status' => 'inactive']);
-                    Log::info("Pond {$pond->id} set to inactive due to Harvesting schedule.");
-                }
+            // Send Broadcast Notification and Email
+            if ($pond->user) {
+                $pond->user->notify(new ScheduleNotification($notification));
+                Mail::to($pond->user->email)->send(new ScheduleReminderMail($notification));
+                Log::info("Notification and email sent to user {$pond->user_id} for pond {$pond->id} and schedule {$schedule->id}.");
             }
 
-            // Send only ONE email per user for daily schedules
-            if ($schedule->frequency === 'daily' && count($notifications) > 0) {
-                // Send email with the first notification (contains schedule info)
-                Mail::to($user->email)->send(new ScheduleReminderMail($notifications[0], count($userPonds)));
-                Log::info("Daily email sent to user {$userId} for {$userPonds->count()} ponds.");
-            } else {
-                // For non-daily schedules, send one email per pond
-                foreach ($notifications as $notification) {
-                    Mail::to($user->email)->send(new ScheduleReminderMail($notification));
-                }
-                Log::info("Notifications sent to user {$userId} for {$userPonds->count()} ponds.");
+            // Automatically set pond to inactive if the schedule is for Harvesting
+            if ($schedule->operationType && $schedule->operationType->name === 'Harvesting') {
+                $pond->update(['status' => 'inactive']);
+                Log::info("Pond {$pond->id} set to inactive due to Harvesting schedule.");
             }
         }
     }
