@@ -3,11 +3,15 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\EmailVerificationMail;
+use App\Mail\PasswordResetMail;
+use App\Models\Otp;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 
@@ -33,12 +37,14 @@ class AuthController extends Controller
 
         event(new Registered($user));
 
-        $token = $user->createToken('mobile-app')->plainTextToken;
+        // Create and send OTP for email verification
+        $otp = Otp::createForUser($user->id, 'email_verification');
+        Mail::to($user->email)->send(new EmailVerificationMail($otp));
 
         return response()->json([
-            'message' => 'Registration successful',
-            'user' => $user,
-            'token' => $token,
+            'message' => 'Registration successful. Please verify your email with the OTP sent.',
+            'email' => $user->email,
+            'requires_verification' => true,
         ], 201);
     }
 
@@ -58,6 +64,19 @@ class AuthController extends Controller
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
+        }
+
+        // Check if email is verified
+        if (!$user->email_verified_at) {
+            // Resend verification OTP
+            $otp = Otp::createForUser($user->id, 'email_verification');
+            Mail::to($user->email)->send(new EmailVerificationMail($otp));
+
+            return response()->json([
+                'message' => 'Please verify your email first. A new OTP has been sent to your email.',
+                'requires_verification' => true,
+                'email' => $user->email,
+            ], 403);
         }
 
         $token = $user->createToken('mobile-app')->plainTextToken;
@@ -100,10 +119,169 @@ class AuthController extends Controller
             'email' => 'required|email',
         ]);
 
-        // Implement password reset logic here
-        // For now, return a placeholder response
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            // Return success even if user not found (security best practice)
+            return response()->json([
+                'message' => 'If your email exists in our system, you will receive a password reset OTP.',
+            ]);
+        }
+
+        // Create and send OTP for password reset
+        $otp = Otp::createForUser($user->id, 'password_reset');
+        Mail::to($user->email)->send(new PasswordResetMail($otp));
+
         return response()->json([
-            'message' => 'Password reset link sent to your email',
+            'message' => 'Password reset OTP sent to your email.',
+        ]);
+    }
+
+    /**
+     * Verify email with OTP.
+     */
+    public function verifyEmail(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'otp' => 'required|string|size:6',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            throw ValidationException::withMessages([
+                'email' => ['User not found.'],
+            ]);
+        }
+
+        $otp = Otp::where('user_id', $user->id)
+            ->where('type', 'email_verification')
+            ->where('otp', $request->otp)
+            ->where('is_used', false)
+            ->first();
+
+        if (!$otp || !$otp->isValid()) {
+            throw ValidationException::withMessages([
+                'otp' => ['Invalid or expired OTP.'],
+            ]);
+        }
+
+        $otp->markAsUsed();
+        $user->email_verified_at = now();
+        $user->save();
+
+        return response()->json([
+            'message' => 'Email verified successfully.',
+            'user' => $user,
+        ]);
+    }
+
+    /**
+     * Resend email verification OTP.
+     */
+    public function resendVerificationOtp(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            throw ValidationException::withMessages([
+                'email' => ['User not found.'],
+            ]);
+        }
+
+        if ($user->email_verified_at) {
+            return response()->json([
+                'message' => 'Email already verified.',
+            ]);
+        }
+
+        $otp = Otp::createForUser($user->id, 'email_verification');
+        Mail::to($user->email)->send(new EmailVerificationMail($otp));
+
+        return response()->json([
+            'message' => 'Verification OTP sent to your email.',
+        ]);
+    }
+
+    /**
+     * Verify password reset OTP.
+     */
+    public function verifyResetOtp(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'otp' => 'required|string|size:6',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            throw ValidationException::withMessages([
+                'email' => ['User not found.'],
+            ]);
+        }
+
+        $otp = Otp::where('user_id', $user->id)
+            ->where('type', 'password_reset')
+            ->where('otp', $request->otp)
+            ->where('is_used', false)
+            ->first();
+
+        if (!$otp || !$otp->isValid()) {
+            throw ValidationException::withMessages([
+                'otp' => ['Invalid or expired OTP.'],
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'OTP verified successfully.',
+            'reset_token' => base64_encode($user->id . '|' . $otp->id . '|' . now()->timestamp),
+        ]);
+    }
+
+    /**
+     * Reset password with verified OTP.
+     */
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'otp' => 'required|string|size:6',
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            throw ValidationException::withMessages([
+                'email' => ['User not found.'],
+            ]);
+        }
+
+        $otp = Otp::where('user_id', $user->id)
+            ->where('type', 'password_reset')
+            ->where('otp', $request->otp)
+            ->where('is_used', false)
+            ->first();
+
+        if (!$otp || !$otp->isValid()) {
+            throw ValidationException::withMessages([
+                'otp' => ['Invalid or expired OTP.'],
+            ]);
+        }
+
+        $otp->markAsUsed();
+        $user->update([
+            'password' => Hash::make($request->password),
+        ]);
+
+        return response()->json([
+            'message' => 'Password reset successfully. You can now login with your new password.',
         ]);
     }
 
