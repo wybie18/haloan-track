@@ -139,12 +139,7 @@
                 <div class="reminder-title">{{ $title }}</div>
                 <div class="reminder-message">{{ $message }}</div>
                 <div class="reminder-details">
-                    @if($pondCount > 1)
-                    <div class="detail-item">
-                        <span class="detail-label">🐟 Ponds:</span>
-                        <span class="pond-badge">{{ $pondCount }} active ponds</span>
-                    </div>
-                    @elseif($pondName)
+                    @if($pondName)
                     <div class="detail-item">
                         <span class="detail-label">🐟 Pond:</span>
                         <span class="pond-badge">{{ $pondName }}</span>
