@@ -11,10 +11,16 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
 
+// Email Verification & Password Reset (OTP)
+Route::post('/verify-email', [AuthController::class, 'verifyEmail']);
+Route::post('/resend-verification-otp', [AuthController::class, 'resendVerificationOtp']);
+Route::post('/verify-reset-otp', [AuthController::class, 'verifyResetOtp']);
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+
 Route::get('/auth/{provider}/redirect', [OauthController::class, 'redirectToProvider']);
 Route::get('/auth/{provider}/callback', [OauthController::class, 'handleProviderCallback']);
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
     Route::put('/profile', [AuthController::class, 'updateProfile']);
     Route::post('/logout', [AuthController::class, 'logout']);
