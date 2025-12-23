@@ -121,12 +121,12 @@
     <div class="container">
         <div class="header">
             <h1>🔐 Password Reset</h1>
-            <p>Haloan Track Security</p>
+            <p>Mudfish Track Security</p>
         </div>
         <div class="content">
             <p class="greeting">Hello!</p>
             <p class="message">
-                We received a request to reset your password for your Haloan Track account. Use the following OTP code to complete the password reset:
+                We received a request to reset your password for your Mudfish Track account. Use the following OTP code to complete the password reset:
             </p>
             
             <div class="otp-box">
@@ -144,11 +144,11 @@
             </div>
             
             <p class="message">
-                For your security, never share your OTP code with anyone, including people claiming to be from Haloan Track support.
+                For your security, never share your OTP code with anyone, including people claiming to be from Mudfish Track support.
             </p>
         </div>
         <div class="footer">
-            <p>&copy; {{ date('Y') }} Haloan Track. All rights reserved.</p>
+            <p>&copy; {{ date('Y') }} Mudfish Track. All rights reserved.</p>
             <p><a href="#">Privacy Policy</a> • <a href="#">Terms of Service</a></p>
         </div>
     </div>

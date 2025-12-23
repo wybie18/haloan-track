@@ -127,7 +127,7 @@
     <div class="container">
         <div class="header">
             <h1>🔔 Schedule Reminder</h1>
-            <p>Haloan Track Notification</p>
+            <p>Mudfish Track Notification</p>
         </div>
         <div class="content">
             <p class="greeting">Hello!</p>
@@ -157,11 +157,11 @@
             </div>
             
             <p class="message">
-                Open the Haloan Track app to view more details.
+                Open the Mudfish Track app to view more details.
             </p>
         </div>
         <div class="footer">
-            <p>&copy; {{ date('Y') }} Haloan Track. All rights reserved.</p>
+            <p>&copy; {{ date('Y') }} Mudfish Track. All rights reserved.</p>
             <p><a href="#">Privacy Policy</a> • <a href="#">Terms of Service</a></p>
         </div>
     </div>

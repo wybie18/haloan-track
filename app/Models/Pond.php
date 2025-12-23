@@ -13,6 +13,7 @@ class Pond extends Model
      */
     protected $fillable = [
         'user_id',
+        'fish_type_id',
         'name',
         'fish_count',
         'registered_at',
@@ -38,6 +39,14 @@ class Pond extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the fish type of the pond.
+     */
+    public function fishType()
+    {
+        return $this->belongsTo(FishType::class);
     }
 
     /**

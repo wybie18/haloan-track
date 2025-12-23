@@ -109,13 +109,13 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🐟 Haloan Track</h1>
+            <h1>🐟 Mudfish Track</h1>
             <p>Mudfish Pond Management System</p>
         </div>
         <div class="content">
             <p class="greeting">Hello!</p>
             <p class="message">
-                Thank you for registering with Haloan Track. To complete your registration and verify your email address, please use the following OTP code:
+                Thank you for registering with Mudfish Track. To complete your registration and verify your email address, please use the following OTP code:
             </p>
             
             <div class="otp-box">
@@ -129,11 +129,11 @@
             </div>
             
             <p class="message">
-                If you did not create an account with Haloan Track, please ignore this email.
+                If you did not create an account with Mudfish Track, please ignore this email.
             </p>
         </div>
         <div class="footer">
-            <p>&copy; {{ date('Y') }} Haloan Track. All rights reserved.</p>
+            <p>&copy; {{ date('Y') }} Mudfish Track. All rights reserved.</p>
             <p><a href="#">Privacy Policy</a> • <a href="#">Terms of Service</a></p>
         </div>
     </div>

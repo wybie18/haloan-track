@@ -33,7 +33,7 @@ class PasswordResetMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Reset Your Password - Haloan Track',
+            subject: 'Reset Your Password - Mudfish Track',
         );
     }
 

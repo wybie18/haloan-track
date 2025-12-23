@@ -70,7 +70,7 @@ export default function Index({ ponds }) {
                                                 <span className="text-xs font-bold uppercase tracking-wider">Fish</span>
                                             </div>
                                             <p className="text-2xl font-bold text-slate-700">
-                                                {pond.fish_count.toLocaleString()}
+                                                {pond.fish_count.toLocaleString()} {pond.fish_type ? pond.fish_type.name : 'Fish'}
                                             </p>
                                         </div>
 

@@ -10,6 +10,7 @@ import {
     LuX,
     LuUser,
     LuLogOut,
+    LuFish,
 } from "react-icons/lu";
 
 export default function AuthenticatedLayout({ header, children }) {
@@ -21,6 +22,7 @@ export default function AuthenticatedLayout({ header, children }) {
         { name: "Users", href: "users.index", icon: LuUsers },
         { name: "Schedules", href: "schedules.index", icon: LuCalendar },
         { name: "Ponds", href: "ponds.index", icon: LuWaves },
+        { name: "Fish Types", href: "fish-types.index", icon: LuFish },
     ];
 
     return (
@@ -33,7 +35,7 @@ export default function AuthenticatedLayout({ header, children }) {
                         <Link href="/" className="flex items-center gap-3">
                             <ApplicationLogo className="h-8 w-auto text-emerald-600" />
                             <span className="text-lg font-bold text-slate-900">
-                                Haloan Track
+                                Mudfish Track
                             </span>
                         </Link>
                     </div>
@@ -122,7 +124,7 @@ export default function AuthenticatedLayout({ header, children }) {
                         <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4">
                             <div className="flex h-16 shrink-0 items-center gap-3">
                                 <ApplicationLogo className="h-8 w-auto text-emerald-600" />
-                                <span className="text-lg font-bold text-slate-900">Haloan Track</span>
+                                <span className="text-lg font-bold text-slate-900">Mudfish Track</span>
                             </div>
                             <nav className="flex flex-1 flex-col">
                                 <ul role="list" className="flex flex-1 flex-col gap-y-7">
@@ -192,7 +194,7 @@ export default function AuthenticatedLayout({ header, children }) {
                         <LuMenu className="h-6 w-6" />
                     </button>
                     <div className="flex-1 text-sm font-semibold leading-6 text-slate-900">
-                        Haloan Track
+                        Mudfish Track
                     </div>
                 </div>
 

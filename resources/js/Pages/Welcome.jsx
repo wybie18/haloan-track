@@ -10,7 +10,7 @@ export default function Welcome() {
 
     return (
         <>
-            <Head title="Haloan Track - Mudfish Pond Manager" />
+            <Head title="Mudfish Track - Mudfish Pond Manager" />
             <div className="min-h-screen bg-[#F8FAFC] text-slate-800 font-sans selection:bg-emerald-100 selection:text-emerald-900">
                 {/* Hero Section */}
                 <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
@@ -151,7 +151,7 @@ export default function Welcome() {
                 <footer className="py-12 px-4 bg-white border-t border-slate-100">
                     <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
                         <div className="text-center md:text-left">
-                            <h3 className="text-xl font-bold text-slate-900">Haloan Track</h3>
+                            <h3 className="text-xl font-bold text-slate-900">Mudfish Track</h3>
                             <p className="text-sm text-slate-500">Mudfish farming simplified.</p>
                         </div>
                         <div className="flex gap-6 text-sm text-slate-600">
@@ -159,7 +159,7 @@ export default function Welcome() {
                             <a href="#" className="hover:text-emerald-600 transition-colors">Terms</a>
                             <a href="#" className="hover:text-emerald-600 transition-colors">Support</a>
                         </div>
-                        <p className="text-sm text-slate-400">© 2025 Haloan Track</p>
+                        <p className="text-sm text-slate-400">© 2025 Mudfish Track</p>
                     </div>
                 </footer>
             </div>

@@ -33,7 +33,7 @@ class ScheduleReminderMail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: $this->notificationModel->title . ' - Haloan Track Reminder',
+            subject: $this->notificationModel->title . ' - Mudfish Track Reminder',
         );
     }
 

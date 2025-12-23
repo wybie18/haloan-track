@@ -7,7 +7,7 @@ export default function GuestLayout({ children }) {
             <div className="mb-8">
                 <Link href="/" className="flex flex-col items-center gap-2 group">
                     <ApplicationLogo className="h-16 w-16 text-emerald-600 transition-transform duration-300 group-hover:scale-110" />
-                    <span className="text-2xl font-bold text-slate-900 tracking-tight">Haloan Track</span>
+                    <span className="text-2xl font-bold text-slate-900 tracking-tight">Mudfish Track</span>
                 </Link>
             </div>
 
