@@ -15,7 +15,7 @@ class PondController extends Controller
     {
         /** @var \App\Models\User $user */
         $user  = Auth::user();
-        $ponds = $user->ponds()->latest()->get();
+        $ponds = $user->ponds()->with('fishType')->latest()->get();
 
         return response()->json($ponds);
     }
@@ -26,9 +26,10 @@ class PondController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name'       => 'required|string|max:255',
-            'fish_count' => 'required|integer|min:0',
-            'status'     => 'nullable|in:active,inactive',
+            'name'         => 'required|string|max:255',
+            'fish_count'   => 'required|integer|min:0',
+            'status'       => 'nullable|in:active,inactive',
+            'fish_type_id' => 'required|exists:fish_types,id',
         ]);
 
         $validated['registered_at'] = now();
@@ -62,9 +63,10 @@ class PondController extends Controller
         }
 
         $validated = $request->validate([
-            'name'       => 'sometimes|string|max:255',
-            'fish_count' => 'sometimes|integer|min:0',
-            'status'     => 'nullable|in:active,inactive',
+            'name'         => 'sometimes|string|max:255',
+            'fish_count'   => 'sometimes|integer|min:0',
+            'status'       => 'nullable|in:active,inactive',
+            'fish_type_id' => 'sometimes|exists:fish_types,id',
         ]);
 
         $pond->update($validated);
