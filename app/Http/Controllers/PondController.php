@@ -11,7 +11,7 @@ class PondController extends Controller
     function index(Request $request)
     {
         $ponds = Pond::orderBy('name')
-            ->with('user')
+            ->with('user', 'fishType')
             ->paginate(12)
             ->withQueryString();
 
