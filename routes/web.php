@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FishTypeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PondController;
 use App\Http\Controllers\ProfileController;
@@ -23,6 +24,11 @@ Route::middleware('auth', 'verified', 'admin')->group(function () {
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::resource('schedules', ScheduleController::class);
     Route::get('/ponds/index', [PondController::class, 'index'])->name('ponds.index');
+
+    Route::get('/fish-types', [FishTypeController::class, 'index'])->name('fish-types.index');
+    Route::post('/fish-types', [FishTypeController::class, 'store'])->name('fish-types.store');
+    Route::put('/fish-types/{fishType}', [FishTypeController::class, 'update'])->name('fish-types.update');
+    Route::delete('/fish-types/{fishType}', [FishTypeController::class, 'destroy'])->name('fish-types.destroy');
 });
 
 Route::get('/download-app', function () {

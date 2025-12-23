@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\FishTypeController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\OauthController;
 use App\Http\Controllers\Api\PondController;
@@ -30,6 +31,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     // Ponds Management
     Route::name('api.')->group(function () {
         Route::apiResource('ponds', PondController::class);
+        Route::get('/fish-types', [FishTypeController::class, 'index']);
     });
 
     // Notifications
